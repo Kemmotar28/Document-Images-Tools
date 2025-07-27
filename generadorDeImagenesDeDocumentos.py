@@ -3,12 +3,22 @@ from PIL import Image, ImageDraw, ImageFont, ImageEnhance
 import os
 import textwrap
 import random
+import re 
+import string
 
 # Generar texto via LLM
 llm="Nous-Hermes-2-Mistral-7B-DPO.Q4_0.gguf" #llm a usar
 # llm="Phi-3-mini-4k-instruct.Q4_0.gguf" #llm a usar
 # llm="/home/seretur/.local/share/nomic.ai/GPT4All/Meta-Llama-3-8B-Instruct.Q4_0.gguf" #llm a usar
 # llm="/home/seretur/.local/share/nomic.ai/GPT4All/DeepSeek-R1-Distill-Llama-8B-Q4_0.gguf" #llm a usar
+
+def revisar_caracteres(cadena):
+    # Función para generar una letra mayúscula aleatoria
+    def reemplazar_por_letra(match):
+        return random.choice(string.ascii_uppercase)
+    
+    # Reemplaza cualquier carácter que no sea letra, número, guión o guión bajo
+    return re.sub(r'[^a-zA-Z0-9_-]', reemplazar_por_letra, cadena)
 
 def obtener_prompt_aleatorio(nombre_archivo):
     """
@@ -28,6 +38,7 @@ def obtener_prompt_aleatorio(nombre_archivo):
         if not parrafos:
             return "El archivo no contiene párrafos válidos."
 
+        print(f"Total de párrafos encontrados: {len(parrafos)}")
         return random.choice(parrafos)
 
     except FileNotFoundError:
@@ -36,7 +47,7 @@ def obtener_prompt_aleatorio(nombre_archivo):
         return f"⚠️ Ocurrió un error: {e}"
 
 print("directoria actual: "+os.getcwd())
-prompt=obtener_prompt_aleatorio("/home/seretur/Documentos/prompts.txt")
+prompt=obtener_prompt_aleatorio("prompts.txt")
 # prompt="escribe una reseña sobre los récords de velocidad alcanzados en competencias olímpicas de atletismo en los últimos 5 años. Ponle un título destacado"
 
 
@@ -60,8 +71,9 @@ os.chdir(dirtrabajo)
 
 
 # Crear el nombre de la carpeta
-letra=str((int)(random.random()*10))
+letra=str((int)(random.random()*10))+str((int)(random.random()*10)) # Dos digitos aleatorios
 nombre_carpeta = 'R'+letra+texto[:2] + texto[-4:-3]
+nombre_carpeta = revisar_caracteres(nombre_carpeta)  # Reemplazar caracteres no aceptados en el nombre de archivo
 
 
 # Crear la carpeta si no existe
