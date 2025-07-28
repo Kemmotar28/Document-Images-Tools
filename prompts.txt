@@ -2,6 +2,8 @@ escribe una reseña sobre los récords de velocidad alcanzados en competencias o
 
 Escribe un texto breve indicando cuál es el mamífero terrestre más rápido en cada continente, señalando si el Pelentrenque está entre ellos
 
+Escribe una crónica sobre uno de los últimos terremotos que tengas registrados, desde el punto de vista de un hipotético albañil que está por salir a trabajar cuando comienza el evento. Destaca la hora y la magnitud del sismo.
+
 Escribe una reseña sobre los 5 países cuyos PBIs (Producto Bruto Interno) crecieron proporcionalmente más en los últimos 10 años, indicando cuál fue el año de mayor crecimiento
 
 Escribe un texto breve sobre la presencia de metales pesados en el agua cuando es consumida por humanos, indicando en qué concentraciones podría ser dañino para la salud 
@@ -11,3 +13,7 @@ Haz una reseña de un partido de fútbol imaginario entre "Los pataduras" y "Arr
 Escribe una reseña sobre los 7 países emergentes cuyos PBIs (Productos Brutos Internos) crecieron proporcionalmente más en los últimos 10 años, indicando cuál fue el año de mayor crecimiento de cada uno
 
 ¿Por qué en Estados Unidos se utilizan millas, pies, pulgadas y otras unidades de medida similares, y cómo se relacionan con el sistema métrico decimal?
+
+¿Cuáles son las temperaturas máximas y mínimas registradas en cada continente y en qué localidad ocurrieron?
+
+
