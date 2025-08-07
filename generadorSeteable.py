@@ -2,6 +2,96 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, scrolledtext
 import random
 from gpt4all import GPT4All
+from PIL import Image, ImageDraw, ImageFont
+import os
+import textwrap
+
+def crear_imagen_texto(config):
+    """
+    Genera una imagen PNG con texto formateado, tamaño A4, márgenes y soporte para títulos.
+    
+    Parámetros:
+        config (dict): Diccionario con las claves:
+            - texto (str): Texto principal (puede tener \n\n para separar párrafos)
+            - titulo (str): Título opcional (aparece al inicio)
+            - nombre_archivo (str): Nombre del archivo (sin extensión)
+            - fuente_path (str): Ruta al archivo de fuente (.ttf, .otf). Si no existe, usa predeterminada.
+            - tamaño_fuente (int): Tamaño base del texto (por defecto 20)
+    """
+    # Parámetros con valores por defecto
+    texto = config.get("texto", "")
+    titulo = config.get("titulo", "")
+    nombre_archivo = config.get("nombre_archivo", "documento")
+    fuente_path = config.get("fuente_path", None)
+    tamaño_fuente = config.get("tamaño_fuente", 20)
+
+    # Nombre de la carpeta: 3 primeras + 4 últimas letras del nombre_archivo
+    nombre_carpeta = nombre_archivo[:3] + nombre_archivo[-4:]
+    os.makedirs(nombre_carpeta, exist_ok=True)
+
+    # Dimensiones A4 a 150 DPI
+    ancho_imagen = 1240
+    alto_imagen = 1754
+    color_fondo = (255, 255, 255)
+    color_texto = (0, 0, 0)
+    margen = 50
+
+    # Crear imagen
+    imagen = Image.new('RGB', (ancho_imagen, alto_imagen), color_fondo)
+    dibujo = ImageDraw.Draw(imagen)
+
+    # Fuente principal
+    try:
+        fuente = ImageFont.truetype(fuente_path, tamaño_fuente) if fuente_path else ImageFont.load_default()
+    except (OSError, IOError):
+        print(f"⚠️ Fuente '{fuente_path}' no encontrada. Usando fuente predeterminada.")
+        fuente = ImageFont.load_default()
+
+    # Fuente del título (25% más grande)
+    tamaño_titulo = int(tamaño_fuente * 1.25)
+    try:
+        fuente_titulo = ImageFont.truetype(fuente_path, tamaño_titulo) if fuente_path else ImageFont.truetype("arial.ttf", tamaño_titulo)
+    except:
+        try:
+            fuente_titulo = ImageFont.truetype("arial.ttf", tamaño_titulo)
+        except:
+            # Si no hay arial, usamos la predeterminada escalada
+            fuente_titulo = ImageFont.load_default()
+
+    # Alturas y espaciados
+    bbox = fuente.getbbox("Ay")
+    linea_altura = bbox[3]
+    espacio_entre_lineas = int(linea_altura * 0.6)
+    espacio_entre_parrafos = linea_altura * 2
+
+    # Posición inicial
+    pos_y = margen
+
+    # Dibujar título si existe
+    if titulo:
+        lineas_titulo = textwrap.wrap(titulo, width=50)  # Ajuste simple para título
+        for linea in lineas_titulo:
+            dibujo.text((margen, pos_y), linea, font=fuente_titulo, fill=color_texto)
+            pos_y += tamaño_titulo + espacio_entre_lineas
+        pos_y += espacio_entre_parrafos  # Espacio extra después del título
+
+    # Procesar párrafos del texto principal
+    parrafos = texto.split('\n\n')
+    area_ancho = ancho_imagen - 2 * margen
+
+    for parrafo in parrafos:
+        lineas = textwrap.wrap(parrafo.strip(), width=int(area_ancho / fuente.getlength("a")))
+        for linea in lineas:
+            dibujo.text((margen, pos_y), linea, font=fuente, fill=color_texto)
+            pos_y += linea_altura + espacio_entre_lineas
+        pos_y += espacio_entre_parrafos  # Espacio entre párrafos
+
+    # Guardar imagen
+    ruta_archivo = os.path.join(nombre_carpeta, f"{nombre_archivo}.png")
+    imagen.save(ruta_archivo)
+
+    print(f"✅ Imagen guardada en: {ruta_archivo}")
+    return ruta_archivo
 
 class GPT4AllApp:
     def __init__(self, root):
@@ -115,6 +205,17 @@ class GPT4AllApp:
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(f"Prompt:\n{self.prompt_text}\n\nRespuesta:\n{self.generated_text}")
             messagebox.showinfo("Éxito", "Texto guardado correctamente.")
+            letra=str((int)(random.random()*10))+str((int)(random.random()*10)) # Dos digitos aleatorios
+            nombreArchivo="Gn"+letra+file_path[-2:-4]+".png"
+            confImagen={
+                "título": "Texto Generado",
+                "texto":self.generated_text,
+                "nombre_archivo":nombreArchivo,
+                "fuente_path":"/home/seretur/Imágenes/Fuentes/Montse/Montserrat-Variable.ttf",
+                "tamaño_fuente":18
+            }
+            print("Creando imagen")
+            crear_imagen_texto(confImagen)
 
 if __name__ == "__main__":
     root = tk.Tk()
